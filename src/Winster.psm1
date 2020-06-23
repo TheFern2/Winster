@@ -7,7 +7,9 @@
 ##
 ## A module for checking common items in Windows OS
 ## which can then later be compared with something like Pester
-##
+## 
+## https://github.com/kodaman2/Winster
+## 
 ##########################################################################################################
 
 # Finds and returns a windows registry key
