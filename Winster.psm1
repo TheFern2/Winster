@@ -3,7 +3,7 @@
 ## Winster v1.0.0
 ##
 ## by Fernando Balandran (fernando.balandran.e@gmail.com)
-## 6/19/2020
+## 6/23/2020
 ##
 ## A module for checking common items in Windows OS
 ## which can then later be compared with something like Pester
