@@ -5,10 +5,12 @@ Winster is a powershell module for checking common things on Windows OS. Its nam
 ## Available Functions Overview
 
 - Get-RegistryKey
+- Test-RegistryPath
+- Test-RegistryKey
 - Compare-TwoRegistryKey
 - Test-StringInKey
 - Confirm-FolderExists
-- Confirm-FolderExistsLeaf
+- Confirm-FileExistsLeaf
 - Confirm-FileExists
 - Get-RamBytes
 - Get-NumProcessors

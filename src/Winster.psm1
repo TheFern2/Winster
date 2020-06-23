@@ -15,6 +15,34 @@ function Get-RegistryKey($regKey, $keyPropertyName)
     return (Get-ItemProperty -Path $regKey -Name $keyPropertyName).$keyPropertyName
 }
 
+# https://www.jonathanmedd.net/2014/02/testing-for-the-presence-of-a-registry-key-and-value.html
+# Checks whether a path exists, sometimes a path is not created unless is needed
+function Test-RegistryPath($regKey)
+{
+    return Test-Path $regKey
+}
+
+# Checks whether a key exists
+function Test-RegistryValue {
+
+    param (
+        [parameter(Mandatory=$true)]
+        [ValidateNotNullOrEmpty()]$Path,
+
+        [parameter(Mandatory=$true)]
+        [ValidateNotNullOrEmpty()]$Value
+    )
+
+    try {
+        Get-ItemProperty -Path $Path | Select-Object -ExpandProperty $Value -ErrorAction Stop | Out-Null
+            return $true
+    }
+    catch {
+        return $false
+    }
+
+}
+
 function Compare-TwoRegistryKey($regKey, $keyPropertyName, $regKey2, $keyPropertyName2, $comparisonValue)
 {
     $val = (Get-ItemProperty -Path $regKey -Name $keyPropertyName).$keyPropertyName
