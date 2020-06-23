@@ -10,19 +10,23 @@
 ##
 ##########################################################################################################
 
+# Finds and returns a windows registry key
+# returns a string
 function Get-RegistryKey($regKey, $keyPropertyName)
 {
     return (Get-ItemProperty -Path $regKey -Name $keyPropertyName).$keyPropertyName
 }
 
 # https://www.jonathanmedd.net/2014/02/testing-for-the-presence-of-a-registry-key-and-value.html
-# Checks whether a path exists, sometimes a path is not created unless is needed
+# Checks whether a path exists
+# returns a boolean
 function Test-RegistryPath($regKey)
 {
     return Test-Path $regKey
 }
 
 # Checks whether a key exists
+# returns a boolean
 function Test-RegistryValue {
 
     param (
@@ -43,6 +47,8 @@ function Test-RegistryValue {
 
 }
 
+# In some rare ocassions two keys need to be compared
+# returns a boolean
 function Compare-TwoRegistryKey($regKey, $keyPropertyName, $regKey2, $keyPropertyName2, $comparisonValue)
 {
     $val = (Get-ItemProperty -Path $regKey -Name $keyPropertyName).$keyPropertyName
@@ -56,6 +62,9 @@ function Compare-TwoRegistryKey($regKey, $keyPropertyName, $regKey2, $keyPropert
     }
 }
 
+# Test whether stringToMatch exists in a registry key
+# useful when we don't know the value of a key but know part of a key
+# returns a boolean
 function Test-StringInKey($regKey, $keyPropertyName, $stringToMatch)
 {
     $val = (Get-ItemProperty -Path $regKey -Name $keyPropertyName).$keyPropertyName
@@ -130,6 +139,7 @@ function Get-DiskSize($currentHost, $driveLetter)
     return (Get-WmiObject Win32_LogicalDisk -ComputerName $currentHost -Filter "DeviceID='${driveLetter}:'").Size
 }
 
+# This is just a quick helper to read json data
 function Get-JsonData($configPath)
 {
     return Get-Content -Raw -Path $configPath | ConvertFrom-Json
@@ -148,7 +158,6 @@ function Confirm-FolderAccess($folderPath, $CheckUser)
         return $permission.AccessControlType
     }
     Else {
-        #Write-Host "$CheckUser Doesn't have any permission on $Folder"
         return $null
     }
 }
