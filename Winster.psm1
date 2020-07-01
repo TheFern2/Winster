@@ -2,7 +2,7 @@
 ##
 ## Winster v1.0.0
 ##
-## by Fernando Balandran (fernandobe+dev@protonmail.com)
+## by Fernando Balandran (fernandobe+git@protonmail.com)
 ## 6/23/2020
 ##
 ## A module for checking common items in Windows OS
