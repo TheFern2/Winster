@@ -168,7 +168,6 @@ function Confirm-FolderAccess($folderPath, $CheckUser)
     }
 }
 
-<<<<<<< HEAD
 function Confirm-FolderAccess2 ($folderPath, $user, $accesschkToolPath) 
 {
     ##https://docs.microsoft.com/en-us/sysinternals/downloads/accesschk
@@ -200,8 +199,6 @@ function Confirm-FolderAccess2 ($folderPath, $user, $accesschkToolPath)
 }
 
 
-=======
->>>>>>> aa1b20a48121ae9379c339e7be4b30ea13823cb2
 function Confirm-ProcessRunning($processName)
 {
     $eatonPower = Get-Process $processName -ErrorAction SilentlyContinue
