@@ -164,6 +164,37 @@ function Confirm-FolderAccess($folderPath, $CheckUser)
     }
 }
 
+function Confirm-FolderAccess2 ($folderPath, $user, $accesschkToolPath) 
+{
+    ##https://docs.microsoft.com/en-us/sysinternals/downloads/accesschk
+    #$accessloc =  $configpath + "\accesschk.exe"
+    $accessloc = $accesschkToolPath
+
+    $args ="-accepteula -dwq"
+
+    $accesscheck = $accessloc + " " + $user + " " + $folderPath + " " + $args
+
+    IF (Test-Path $folderPath) {
+
+        $results = (& invoke-Expression $accesscheck)
+
+        IF ($results -like "Invalid account name:*")  { 
+            return "User Account Not exist" 
+        }
+        IF ($results -eq "No matching objects found." ) {
+            return "No Access" 
+        }
+        IF ($results -eq "RW "+ $folderPath) { 
+            return "Read Write Access" 
+        }
+        IF ($results -eq "R "+ $folderPath) { 
+            return "Read Access" 
+        }
+
+    } Else { return "Path Not Found" }
+}
+
+
 function Confirm-ProcessRunning($processName)
 {
     $eatonPower = Get-Process $processName -ErrorAction SilentlyContinue
