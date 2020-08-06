@@ -2,7 +2,11 @@
 ##
 ## Winster v1.0.0
 ##
+<<<<<<< HEAD
 ## by Fernando Balandran (fernandobe+git@protonmail.com)
+=======
+## by Fernando B. (fernandobe+git@protonmail.com)
+>>>>>>> aa1b20a48121ae9379c339e7be4b30ea13823cb2
 ## 6/23/2020
 ##
 ## A module for checking common items in Windows OS
@@ -164,6 +168,7 @@ function Confirm-FolderAccess($folderPath, $CheckUser)
     }
 }
 
+<<<<<<< HEAD
 function Confirm-FolderAccess2 ($folderPath, $user, $accesschkToolPath) 
 {
     ##https://docs.microsoft.com/en-us/sysinternals/downloads/accesschk
@@ -195,6 +200,8 @@ function Confirm-FolderAccess2 ($folderPath, $user, $accesschkToolPath)
 }
 
 
+=======
+>>>>>>> aa1b20a48121ae9379c339e7be4b30ea13823cb2
 function Confirm-ProcessRunning($processName)
 {
     $eatonPower = Get-Process $processName -ErrorAction SilentlyContinue
@@ -463,4 +470,8 @@ function Convert-Size {
             
     return [Math]::Round($value,$Precision,[MidPointRounding]::AwayFromZero)            
             
+<<<<<<< HEAD
 } 
+=======
+} 
+>>>>>>> aa1b20a48121ae9379c339e7be4b30ea13823cb2
