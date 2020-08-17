@@ -33,8 +33,4 @@ Winster is a powershell module for checking common things on Windows OS. Its nam
 
 ## Questions, Contributions, or Feedback
 
-<<<<<<< HEAD
-fernando.balandran.e@gmail.com
-=======
 fernandobe+git@protonmail.com
->>>>>>> aa1b20a48121ae9379c339e7be4b30ea13823cb2
