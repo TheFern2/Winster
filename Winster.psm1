@@ -2,11 +2,7 @@
 ##
 ## Winster v1.0.0
 ##
-<<<<<<< HEAD
-## by Fernando Balandran (fernandobe+git@protonmail.com)
-=======
 ## by Fernando B. (fernandobe+git@protonmail.com)
->>>>>>> aa1b20a48121ae9379c339e7be4b30ea13823cb2
 ## 6/23/2020
 ##
 ## A module for checking common items in Windows OS
@@ -467,8 +463,4 @@ function Convert-Size {
             
     return [Math]::Round($value,$Precision,[MidPointRounding]::AwayFromZero)            
             
-<<<<<<< HEAD
 } 
-=======
-} 
->>>>>>> aa1b20a48121ae9379c339e7be4b30ea13823cb2
