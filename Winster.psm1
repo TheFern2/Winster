@@ -432,6 +432,15 @@ function Find-ProgramVersionGrep($programName, $version)
     }
 }
 
+function Request-Command ($cmd) {
+    return Invoke-Expression $cmd
+}
+
+# returns 1 or 0
+function Test-WinActivation() {
+    return (Get-CimInstance SoftwareLicensingProduct -Filter "Name like 'Windows%'" | where { $_.PartialProductKey } ).LicenseStatus
+}
+
 # https://techibee.com/powershell/convert-from-any-to-any-bytes-kb-mb-gb-tb-using-powershell/2376
 function Convert-Size {            
     [cmdletbinding()]            
