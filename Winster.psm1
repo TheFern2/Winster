@@ -164,15 +164,15 @@ function Confirm-FolderAccess($folderPath, $CheckUser)
     }
 }
 
-function Confirm-FolderAccess2 ($folderPath, $user, $accesschkToolPath) 
+function Confirm-FolderAccess2 ($folderPath, $userOrGroup, $accesschkToolPath) 
 {
     ##https://docs.microsoft.com/en-us/sysinternals/downloads/accesschk
     #$accessloc =  $configpath + "\accesschk.exe"
     $accessloc = $accesschkToolPath
 
-    $args ="-accepteula -dwq"
+    $args ="-accepteula -dq"
 
-    $accesscheck = $accessloc + " " + $user + " " + $folderPath + " " + $args
+    $accesscheck = $accessloc + " " + $userOrGroup + " " + $folderPath + " " + $args
 
     IF (Test-Path $folderPath) {
 
@@ -187,7 +187,7 @@ function Confirm-FolderAccess2 ($folderPath, $user, $accesschkToolPath)
         IF ($results -eq "RW "+ $folderPath) { 
             return "Read Write Access" 
         }
-        IF ($results -eq "R "+ $folderPath) { 
+        IF ($results -eq "R  "+ $folderPath) { 
             return "Read Access" 
         }
 
@@ -244,6 +244,77 @@ function Compare-FileVersion($filepath, $version)
     } else {
         return $false
     }
+}
+
+# https://adamtheautomator.com/one-server-port-testing-tool/
+function Test-Port ($Port, $Protocol){
+	
+	# Original function is really for multiple computers, and multiple ports
+    # but for unit testing is better to test one machine, one port at a time
+    # PS> Test-Port $ComputerName 80 TCP
+
+	process {
+        [int]$TcpTimeout = 1000
+    	[int]$UdpTimeout = 1000
+        # Modification necessary to avoid inputting hostname
+        $ComputerName = (Get-WmiObject Win32_ComputerSystem).Name
+
+		foreach ($Computer in $ComputerName) {
+			foreach ($Portx in $Port) {
+				$Output = @{ 'Computername' = $Computer; 'Port' = $Portx; 'Protocol' = $Protocol; 'Result' = '' }
+				Write-Verbose "$($MyInvocation.MyCommand.Name) - Beginning port test on '$Computer' on port '$Protocol<code>:$Portx'"
+				if ($Protocol -eq 'TCP') {
+					$TcpClient = New-Object System.Net.Sockets.TcpClient
+					$Connect = $TcpClient.BeginConnect($Computer, $Portx, $null, $null)
+					$Wait = $Connect.AsyncWaitHandle.WaitOne($TcpTimeout, $false)
+					if (!$Wait) {
+						$TcpClient.Close()
+						Write-Verbose "$($MyInvocation.MyCommand.Name) - '$Computer' failed port test on port '$Protocol</code>:$Portx'"
+						$Output.Result = $false
+					} else {
+						$TcpClient.EndConnect($Connect)
+						$TcpClient.Close()
+						Write-Verbose "$($MyInvocation.MyCommand.Name) - '$Computer' passed port test on port '$Protocol<code>:$Portx'"
+						$Output.Result = $true
+					}
+					$TcpClient.Close()
+					$TcpClient.Dispose()
+				} elseif ($Protocol -eq 'UDP') {
+					$UdpClient = New-Object System.Net.Sockets.UdpClient
+					$UdpClient.Client.ReceiveTimeout = $UdpTimeout
+					$UdpClient.Connect($Computer, $Portx)
+					Write-Verbose "$($MyInvocation.MyCommand.Name) - Sending UDP message to computer '$Computer' on port '$Portx'"
+					$a = new-object system.text.asciiencoding
+					$byte = $a.GetBytes("$(Get-Date)")
+					[void]$UdpClient.Send($byte, $byte.length)
+					#IPEndPoint object will allow us to read datagrams sent from any source.
+					Write-Verbose "$($MyInvocation.MyCommand.Name) - Creating remote endpoint"
+					$remoteendpoint = New-Object system.net.ipendpoint([system.net.ipaddress]::Any, 0)
+					try {
+						#Blocks until a message returns on this socket from a remote host.
+						Write-Verbose "$($MyInvocation.MyCommand.Name) - Waiting for message return"
+						$receivebytes = $UdpClient.Receive([ref]$remoteendpoint)
+						[string]$returndata = $a.GetString($receivebytes)
+						If ($returndata) {
+							Write-Verbose "$($MyInvocation.MyCommand.Name) - '$Computer' passed port test on port '$Protocol</code>:$Portx'"
+							$Output.Result = $true
+						}
+					} catch {
+						Write-Verbose "$($MyInvocation.MyCommand.Name) - '$Computer' failed port test on port '$Protocol`:$Portx' with error '$($_.Exception.Message)'"
+						$Output.Result = $false
+					}
+					$UdpClient.Close()
+					$UdpClient.Dispose()
+				}
+				# [pscustomobject]$Output # This prints a result table, which we don't need
+                if($Output.Result -eq $true){
+                    return $true
+                } else {
+                    return $false
+                }
+			}
+		}
+	}
 }
 
 # https://devblogs.microsoft.com/scripting/use-powershell-to-quickly-find-installed-software/
