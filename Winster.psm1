@@ -340,6 +340,7 @@ function Find-ProgramVersion($programName, $version)
     $reg = [microsoft.win32.registrykey]::OpenRemoteBaseKey('LocalMachine',$computerName)
     $regkey = $reg.OpenSubKey($uninstallKey)
     $subkeys = $regkey.GetSubKeyNames()
+    $programFound = $false
 
     foreach($key in $subkeys){
     
@@ -352,6 +353,7 @@ function Find-ProgramVersion($programName, $version)
     
         if($DisplayName | Select-String -Pattern $programName)
         {
+            $programFound = $true
             if([version]$DisplayVersion -ge [version]$version){
                 return $true
             } else {
@@ -379,13 +381,17 @@ function Find-ProgramVersion($programName, $version)
         if($DisplayName | Select-String -Pattern $programName)
         {
             #Write-Host $DisplayName $DisplayVersion
-
+            $programFound = $true
             if([version]$DisplayVersion -ge [version]$version){
                 return $true
             } else {
                 return $false
             }
         }
+    }
+
+    if($programFound -eq $false){
+        return $false
     }
 }
 
@@ -397,6 +403,7 @@ function Find-ProgramVersionExclude($programName, $version, $excludeString)
     $reg = [microsoft.win32.registrykey]::OpenRemoteBaseKey('LocalMachine',$computerName)
     $regkey = $reg.OpenSubKey($uninstallKey)
     $subkeys = $regkey.GetSubKeyNames()
+    $programFound = $false
 
     foreach($key in $subkeys){
     
@@ -409,6 +416,7 @@ function Find-ProgramVersionExclude($programName, $version, $excludeString)
     
         if($DisplayName | Select-String -Pattern $programName | Select-String -Pattern $excludeString -NotMatch)
         {
+            $programFound = $true
             if([version]$DisplayVersion -ge [version]$version){
                 return $true
             } else {
@@ -436,13 +444,17 @@ function Find-ProgramVersionExclude($programName, $version, $excludeString)
         if($DisplayName | Select-String -Pattern $programName | Select-String -Pattern $excludeString -NotMatch)
         {
             #Write-Host $DisplayName $DisplayVersion
-
+            $programFound = $true
             if([version]$DisplayVersion -ge [version]$version){
                 return $true
             } else {
                 return $false
             }
         }
+    }
+
+    if($programFound -eq $false){
+        return $false
     }
 }
 
@@ -456,6 +468,7 @@ function Find-ProgramVersionGrep($programName, $version)
     $reg = [microsoft.win32.registrykey]::OpenRemoteBaseKey('LocalMachine',$computerName)
     $regkey = $reg.OpenSubKey($uninstallKey)
     $subkeys = $regkey.GetSubKeyNames()
+    $programFound = $false
 
     foreach($key in $subkeys){
     
@@ -468,6 +481,7 @@ function Find-ProgramVersionGrep($programName, $version)
     
         if($DisplayName | Select-String -Pattern $programName)
         {
+            $programFound = $true
             if($DisplayVersion | Select-String $version){
                 return $true
             } else {
@@ -494,12 +508,17 @@ function Find-ProgramVersionGrep($programName, $version)
     
         if($DisplayName | Select-String -Pattern $programName)
         {
+            $programFound = $true
             if($DisplayVersion | Select-String $version){
                 return $true
             } else {
                 return $false
             }
         }
+    }
+
+    if($programFound -eq $false){
+        return $false
     }
 }
 
