@@ -531,6 +531,30 @@ function Test-WinActivation() {
     return (Get-CimInstance SoftwareLicensingProduct -Filter "Name like 'Windows%'" | where { $_.PartialProductKey } ).LicenseStatus
 }
 
+# this function checks whether a windows feature is enabled or disable and returns a boolean
+# compatible with Windows Server 2016, and Windows 10
+# enabled = true, disabled = false
+function Confirm-WindowsFeature($feature) {
+   
+    if(Get-Command Get-WindowsFeature -ErrorAction SilentlyContinue){
+        if((Get-WindowsFeature $feature).InstallState -eq "Installed"){
+            return $true
+        } else {
+            #Write-Host $feature "Not Installed"
+            return $false
+        }
+    }
+
+    if(Get-Command Get-WindowsOptionalFeature -ErrorAction SilentlyContinue){
+        if((Get-WindowsOptionalFeature -Online -FeatureName $feature).State -eq "Enabled"){
+            return $true
+        } else {
+            #Write-Host $feature "Not Installed"
+            return $false
+        }
+    }
+}
+
 # https://techibee.com/powershell/convert-from-any-to-any-bytes-kb-mb-gb-tb-using-powershell/2376
 function Convert-Size {            
     [cmdletbinding()]            
