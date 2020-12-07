@@ -333,6 +333,7 @@ function Test-Port ($Port, $Protocol){
 # ex: DisplayVersion = 4.00.00
 #     version        = 4.10.00
 # False
+# If the version doesn't matter give "any" to the $version parameter
 function Find-ProgramVersion($programName, $version)
 {
     $computerName = $env:COMPUTERNAME
@@ -354,6 +355,10 @@ function Find-ProgramVersion($programName, $version)
         if($DisplayName | Select-String -Pattern $programName)
         {
             $programFound = $true
+            if($version -eq "any"){
+                return $true
+            }
+
             if([version]$DisplayVersion -ge [version]$version){
                 return $true
             } else {
@@ -382,6 +387,10 @@ function Find-ProgramVersion($programName, $version)
         {
             #Write-Host $DisplayName $DisplayVersion
             $programFound = $true
+            if($version -eq "any"){
+                return $true
+            }
+
             if([version]$DisplayVersion -ge [version]$version){
                 return $true
             } else {
@@ -417,6 +426,9 @@ function Find-ProgramVersionExclude($programName, $version, $excludeString)
         if($DisplayName | Select-String -Pattern $programName | Select-String -Pattern $excludeString -NotMatch)
         {
             $programFound = $true
+            if($version -eq "any"){
+                return $true
+            }
             if([version]$DisplayVersion -ge [version]$version){
                 return $true
             } else {
@@ -445,6 +457,9 @@ function Find-ProgramVersionExclude($programName, $version, $excludeString)
         {
             #Write-Host $DisplayName $DisplayVersion
             $programFound = $true
+            if($version -eq "any"){
+                return $true
+            }
             if([version]$DisplayVersion -ge [version]$version){
                 return $true
             } else {
@@ -482,6 +497,9 @@ function Find-ProgramVersionGrep($programName, $version)
         if($DisplayName | Select-String -Pattern $programName)
         {
             $programFound = $true
+            if($version -eq "any"){
+                return $true
+            }
             if($DisplayVersion | Select-String $version){
                 return $true
             } else {
@@ -509,6 +527,9 @@ function Find-ProgramVersionGrep($programName, $version)
         if($DisplayName | Select-String -Pattern $programName)
         {
             $programFound = $true
+            if($version -eq "any"){
+                return $true
+            }
             if($DisplayVersion | Select-String $version){
                 return $true
             } else {
