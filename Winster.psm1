@@ -404,6 +404,76 @@ function Find-ProgramVersion($programName, $version)
     }
 }
 
+function Find-ProgramVersionSimpleMatch($programName, $version)
+{
+    $computerName = $env:COMPUTERNAME
+    $uninstallKey = "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall"
+    $reg = [microsoft.win32.registrykey]::OpenRemoteBaseKey('LocalMachine',$computerName)
+    $regkey = $reg.OpenSubKey($uninstallKey)
+    $subkeys = $regkey.GetSubKeyNames()
+    $programFound = $false
+
+    foreach($key in $subkeys){
+    
+        $thiskey = $uninstallKey+"\\"+$key
+        $thissubkey = $reg.OpenSubKey($thiskey)
+        $DisplayName = $thissubkey.GetValue("DisplayName")
+        $DisplayVersion = $thissubkey.GetValue("DisplayVersion")
+        $Publisher = $thissubkey.GetValue("Publisher")
+
+    
+        if($DisplayName | Select-String -Pattern $programName -SimpleMatch)
+        {
+            $programFound = $true
+            if($version -eq "any"){
+                return $true
+            }
+
+            if([version]$DisplayVersion -ge [version]$version){
+                return $true
+            } else {
+                return $false
+            }
+        }
+    }
+
+    # Repeat for old unistall path, yeah is duplicated code but don't feel like
+    # having to do two functions for now
+    $uninstallKey = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall"
+    $reg = [microsoft.win32.registrykey]::OpenRemoteBaseKey('LocalMachine',$computerName)
+    $regkey = $reg.OpenSubKey($uninstallKey)
+    $subkeys = $regkey.GetSubKeyNames()
+
+    foreach($key in $subkeys){
+    
+        $thiskey = $uninstallKey+"\\"+$key
+        $thissubkey = $reg.OpenSubKey($thiskey)
+        $DisplayName = $thissubkey.GetValue("DisplayName")
+        $DisplayVersion = $thissubkey.GetValue("DisplayVersion")
+        $Publisher = $thissubkey.GetValue("Publisher")
+
+    
+        if($DisplayName | Select-String -Pattern $programName -SimpleMatch)
+        {
+            #Write-Host $DisplayName $DisplayVersion
+            $programFound = $true
+            if($version -eq "any"){
+                return $true
+            }
+
+            if([version]$DisplayVersion -ge [version]$version){
+                return $true
+            } else {
+                return $false
+            }
+        }
+    }
+
+    if($programFound -eq $false){
+        return $false
+    }
+}
+
 # Exclude a certain string
 function Find-ProgramVersionExclude($programName, $version, $excludeString)
 {
